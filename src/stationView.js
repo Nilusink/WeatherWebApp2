@@ -22,6 +22,7 @@ export default function StationView(props)
     const station_data = props.data;
     const [lastWeatherID, setLastWeatherID] = useState(-1);
     const [lastWeather, setLastWeather] = useState(-1);
+    const [intervalID, setIntervalID] = useState(null);
 
 
     // refresh on new data
@@ -30,6 +31,16 @@ export default function StationView(props)
         setLastWeatherID(station_data.id);
         setLastWeather(-1);
         getWeatherData(setLastWeather, 5 * (60 / 5), `station_id=${station_data.id}`);
+
+        // setup interval for refreshing
+        if (intervalID !== null)
+        {
+            clearInterval(intervalID);
+        }
+
+        setIntervalID(setInterval(getWeatherData.bind(
+            this, setLastWeather, 5 * (60 / 5), `station_id=${station_data.id}`
+        ), 60000));
     }
 
     if (!station_data)
@@ -159,7 +170,6 @@ function WeatherGraph(props)
                 return " ";
             }
         },
-        // width: 1000,
         height: 200,
         data: [{
         yValueFormatString: "#,###°",
@@ -184,8 +194,11 @@ function PartWeather(props)
 
     return (
         <div className="part_container">
-            <a>{time.getHours()}:{time.getMinutes()}</a>
+            <a>{pad(time.getHours(), 2)}:{pad(time.getMinutes(), 2)}</a>
             <a>{weather.temperature.toFixed(1)}°</a>
         </div>
     )
 }
+
+const pad = (num, places, pad = "0") => String(num).padStart(places, pad)
+

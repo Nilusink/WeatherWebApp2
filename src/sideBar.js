@@ -19,7 +19,7 @@ export default function SideBar(props)
 
     let filtered_stations = [];
     stations.map((station) => {
-        if (station.position.includes(filter))
+        if (station.position.toLowerCase().includes(filter.toLowerCase()))
         {
             filtered_stations.push(station)
         }
